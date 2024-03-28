@@ -6,7 +6,6 @@ import edu.tinkoff.imageeditor.repository.exception.FileWriteException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.UUID;
 
 public interface ImageStorageService {

@@ -6,7 +6,6 @@ import edu.tinkoff.imageeditor.repository.ImageMetaRepository;
 import edu.tinkoff.imageeditor.repository.TokenRepository;
 import edu.tinkoff.imageeditor.repository.UserRepository;
 import edu.tinkoff.imageeditor.repository.exception.FileReadException;
-import edu.tinkoff.imageeditor.repository.exception.UnprocessableEntityException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

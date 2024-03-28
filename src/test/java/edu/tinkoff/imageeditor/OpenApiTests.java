@@ -5,7 +5,6 @@ import org.openapitools.openapidiff.core.OpenApiCompare;
 import org.openapitools.openapidiff.core.model.ChangedOpenApi;
 import org.openapitools.openapidiff.core.output.HtmlRender;
 import org.openapitools.openapidiff.core.output.MarkdownRender;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 import java.io.*;

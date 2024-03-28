@@ -34,7 +34,6 @@ public class AuthService {
      * username and saves that token in the database.
      * @param registerRequest object that contains username and password
      * @return user dto with roles and generated token
-     * @throws UnprocessableEntityException if user with that username already exists
      */
     public AuthUserDto register(RegisterRequestDto registerRequest) {
         if (userRepository.existsById(registerRequest.getUsername())) {
