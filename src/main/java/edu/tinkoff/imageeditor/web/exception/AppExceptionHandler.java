@@ -5,12 +5,18 @@ import edu.tinkoff.imageeditor.repository.exception.FileReadException;
 import edu.tinkoff.imageeditor.service.exception.AuthenticationException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
+
 @RestControllerAdvice
 public class AppExceptionHandler {
+
+    Logger logger = LoggerFactory.getLogger(AppExceptionHandler.class);
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleException(AuthenticationException e) {
@@ -34,6 +40,10 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception e) {
+        logger.warn(String.format("""
+                Caught unprocessed exception %s
+                   with message: %s
+                   stacktrace: %s""", e.getClass(), e.getMessage(), Arrays.toString(e.getStackTrace())));
         return ResponseEntity.status(500).body(new UiSuccessContainer(false, "Server error"));
     }
 
