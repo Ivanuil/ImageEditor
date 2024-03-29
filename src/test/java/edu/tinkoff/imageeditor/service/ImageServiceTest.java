@@ -7,12 +7,17 @@ import edu.tinkoff.imageeditor.repository.TokenRepository;
 import edu.tinkoff.imageeditor.repository.UserRepository;
 import edu.tinkoff.imageeditor.repository.exception.FileReadException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ImageServiceTest extends TestContext {
 
@@ -53,7 +58,15 @@ public class ImageServiceTest extends TestContext {
         var id = imageService.uploadImage(file, USERNAME);
 
         var stream = imageService.downloadImage(id);
-        Assertions.assertArrayEquals(FILE_TEXT.getBytes(), stream.getInputStream().readAllBytes());
+        assertArrayEquals(FILE_TEXT.getBytes(), stream.getInputStream().readAllBytes());
+
+        var meta = imageService.getImageMeta(id);
+        assertEquals(USERNAME, meta.getAuthor().getUsername());
+        assertEquals(id, meta.getId());
+
+        var imagesByUser = imageService.getImages(USERNAME);
+        assertEquals(1, imagesByUser.size());
+        assertEquals(id, imagesByUser.get(0).getId());
     }
 
     @Test
@@ -68,6 +81,29 @@ public class ImageServiceTest extends TestContext {
 
         Assertions.assertThrows(EntityNotFoundException.class,
                 () -> imageService.getImageMeta(id));
+    }
+
+    @Test
+    public void storeFileInvalidType() {
+        MockMultipartFile file = new MockMultipartFile(
+                "file.txt", "file.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                FILE_TEXT.getBytes());
+
+        Assertions.assertThrows(ConstraintViolationException.class,
+                () -> imageService.uploadImage(file, USERNAME));
+    }
+
+    @Test
+    public void downloadNonExisting() {
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> imageService.downloadImage(UUID.randomUUID()));
+    }
+
+    @Test
+    public void deleteNonExisting() {
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> imageService.deleteImage(UUID.randomUUID()));
     }
 
 }

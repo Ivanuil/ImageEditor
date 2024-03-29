@@ -58,9 +58,6 @@ public class ImageService {
             throw new EntityNotFoundException("No image with id: " + imageId);
 
         InputStream fileInputStream = imageStorageService.get(imageId);
-        if (fileInputStream == null) {
-            throw new FileReadException("No file with such id");
-        }
         return new InputStreamResource(fileInputStream);
     }
 

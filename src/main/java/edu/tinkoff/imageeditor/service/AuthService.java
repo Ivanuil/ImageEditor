@@ -8,7 +8,6 @@ import edu.tinkoff.imageeditor.entity.UserEntity;
 import edu.tinkoff.imageeditor.repository.UserRepository;
 import edu.tinkoff.imageeditor.service.exception.AuthenticationException;
 import edu.tinkoff.imageeditor.web.security.jwt.JwtService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -75,7 +74,7 @@ public class AuthService {
 
     public Role getUserRole(String username) {
         return userRepository.findById(username).orElseThrow(() ->
-                new EntityNotFoundException("No user with username: " + username)).getRole();
+                new AuthenticationException("No user with username: " + username)).getRole();
     }
 
 }
