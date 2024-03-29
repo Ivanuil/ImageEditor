@@ -4,7 +4,6 @@ import edu.tinkoff.imageeditor.dto.auth.AuthUserDto;
 import edu.tinkoff.imageeditor.dto.auth.LoginRequestDto;
 import edu.tinkoff.imageeditor.dto.auth.RegisterRequestDto;
 import edu.tinkoff.imageeditor.entity.Role;
-import edu.tinkoff.imageeditor.repository.exception.UnprocessableEntityException;
 import edu.tinkoff.imageeditor.web.security.SecurityConstants;
 import edu.tinkoff.imageeditor.web.security.UserDetailsImpl;
 import edu.tinkoff.imageeditor.service.AuthService;

@@ -6,7 +6,6 @@ import edu.tinkoff.imageeditor.dto.auth.RegisterRequestDto;
 import edu.tinkoff.imageeditor.entity.Role;
 import edu.tinkoff.imageeditor.entity.UserEntity;
 import edu.tinkoff.imageeditor.repository.UserRepository;
-import edu.tinkoff.imageeditor.repository.exception.UnprocessableEntityException;
 import edu.tinkoff.imageeditor.service.exception.AuthenticationException;
 import edu.tinkoff.imageeditor.web.security.jwt.JwtService;
 import jakarta.persistence.EntityNotFoundException;

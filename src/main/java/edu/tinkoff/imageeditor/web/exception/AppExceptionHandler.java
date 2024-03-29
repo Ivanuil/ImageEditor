@@ -16,7 +16,7 @@ import java.util.Arrays;
 @RestControllerAdvice
 public class AppExceptionHandler {
 
-    Logger logger = LoggerFactory.getLogger(AppExceptionHandler.class);
+    final Logger logger = LoggerFactory.getLogger(AppExceptionHandler.class);
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleException(AuthenticationException e) {
