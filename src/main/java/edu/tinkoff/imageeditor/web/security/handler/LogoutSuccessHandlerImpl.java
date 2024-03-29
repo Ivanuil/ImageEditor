@@ -3,7 +3,6 @@ package edu.tinkoff.imageeditor.web.security.handler;
 import edu.tinkoff.imageeditor.entity.TokenEntity;
 import edu.tinkoff.imageeditor.service.TokenService;
 import edu.tinkoff.imageeditor.web.security.SecurityConstants;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
