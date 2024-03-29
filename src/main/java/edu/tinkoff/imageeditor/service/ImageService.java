@@ -54,6 +54,9 @@ public class ImageService {
     }
 
     public InputStreamResource downloadImage(UUID imageId) throws FileReadException {
+        if (!metaRepository.existsById(imageId))
+            throw new EntityNotFoundException("No image with id: " + imageId);
+
         InputStream fileInputStream = imageStorageService.get(imageId);
         if (fileInputStream == null) {
             throw new FileReadException("No file with such id");

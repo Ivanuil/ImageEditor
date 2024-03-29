@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -75,9 +76,13 @@ public class ImageController {
             @ApiResponse(responseCode = "500", description = "Непредвиденная ошибка",
                     content = {@Content(schema = @Schema(implementation = UiSuccessContainer.class))})
     })
-    @PreAuthorize("@imageSecurity.isOwner(authentication, #imageId)")
     @SneakyThrows
-    public ResponseEntity<?> downloadImage(@PathVariable("image-id") UUID imageId) {
+    public ResponseEntity<?> downloadImage(@PathVariable("image-id") UUID imageId,
+                                           @AuthenticationPrincipal UserDetails user) {
+        if (!imageService.getImageMeta(imageId).getAuthor().getUsername().equals(user.getUsername()))
+            return ResponseEntity.status(404)
+                    .body(new UiSuccessContainer(false, "Image not found, or unavailable"));
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
                         URLEncoder.encode(imageService.getImageMeta(imageId).getOriginalName(),
@@ -102,8 +107,12 @@ public class ImageController {
             @ApiResponse(responseCode = "500", description = "Непредвиденная ошибка",
                     content = {@Content(schema = @Schema(implementation = UiSuccessContainer.class))})
     })
-    @PreAuthorize("@imageSecurity.isOwner(authentication, #imageId)")
-    public ResponseEntity<?> deleteImage(@PathVariable("image-id") UUID imageId) {
+    public ResponseEntity<?> deleteImage(@PathVariable("image-id") UUID imageId,
+                                         @AuthenticationPrincipal UserDetails user) {
+        if (!imageService.getImageMeta(imageId).getAuthor().getUsername().equals(user.getUsername()))
+            return ResponseEntity.status(404)
+                    .body(new UiSuccessContainer(false, "Image not found, or unavailable"));
+
         imageService.deleteImage(imageId);
         return ResponseEntity.ok(new UiSuccessContainer(true, null));
     }

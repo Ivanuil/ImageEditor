@@ -43,8 +43,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Регистрирует нового пользователя")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequestDto requestDto,
-                                      HttpServletResponse response)
-            throws UnprocessableEntityException {
+                                      HttpServletResponse response) {
         AuthUserDto authUser = authService.register(requestDto);
         addTokenCookieToResponse(response, authUser.getToken());
         return ResponseEntity.ok(authUser);
