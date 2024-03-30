@@ -84,17 +84,6 @@ public class ImageServiceTest extends TestContext {
     }
 
     @Test
-    public void storeFileInvalidType() {
-        MockMultipartFile file = new MockMultipartFile(
-                "file.txt", "file.txt",
-                MediaType.TEXT_PLAIN_VALUE,
-                FILE_TEXT.getBytes());
-
-        Assertions.assertThrows(ConstraintViolationException.class,
-                () -> imageService.uploadImage(file, USERNAME));
-    }
-
-    @Test
     public void downloadNonExisting() {
         Assertions.assertThrows(EntityNotFoundException.class,
                 () -> imageService.downloadImage(UUID.randomUUID()));

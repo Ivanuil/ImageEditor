@@ -7,12 +7,9 @@ import edu.tinkoff.imageeditor.repository.TokenRepository;
 import edu.tinkoff.imageeditor.repository.UserRepository;
 import edu.tinkoff.imageeditor.service.exception.AuthenticationException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.lang.reflect.Parameter;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

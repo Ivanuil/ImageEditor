@@ -1,5 +1,6 @@
 package edu.tinkoff.imageeditor.web.controller;
 
+import edu.tinkoff.imageeditor.constraints.FileExtensionConstraint;
 import edu.tinkoff.imageeditor.dto.image.GetImagesResponse;
 import edu.tinkoff.imageeditor.dto.UiSuccessContainer;
 import edu.tinkoff.imageeditor.dto.image.Image;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpHeaders;
@@ -52,7 +54,7 @@ public class ImageController {
                     content = {@Content(schema = @Schema(implementation = UiSuccessContainer.class))})
     })
     public ResponseEntity<?> uploadImage(
-            @RequestPart("file") MultipartFile image,
+            @RequestPart("file") @Valid @FileExtensionConstraint MultipartFile image,
             @AuthenticationPrincipal UserDetails user) {
         var imageUUID = imageService.uploadImage(image, user.getUsername());
         return ResponseEntity.ok(new UploadImageResponse(imageUUID));

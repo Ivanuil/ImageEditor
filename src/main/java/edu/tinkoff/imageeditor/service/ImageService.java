@@ -1,6 +1,5 @@
 package edu.tinkoff.imageeditor.service;
 
-import edu.tinkoff.imageeditor.config.AllowedImageExtension;
 import edu.tinkoff.imageeditor.entity.ImageMetaEntity;
 import edu.tinkoff.imageeditor.entity.UserEntity;
 import edu.tinkoff.imageeditor.repository.ImageMetaRepository;
@@ -10,7 +9,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,15 +24,8 @@ public class ImageService {
     private final ImageStorageService imageStorageService;
     private final ImageMetaRepository metaRepository;
 
-    public UUID uploadImage(MultipartFile image, String username) throws ConstraintViolationException {
-        String extension = FilenameUtils.getExtension(image.getOriginalFilename());
-
-        try { // TODO: move using bean validation
-            AllowedImageExtension.caseIgnoreValueOf(extension);
-        } catch (Exception e) {
-            throw new ConstraintViolationException("File extension " + extension + " not allowed" , null);
-        }
-
+    public UUID uploadImage(MultipartFile image,
+                            String username) throws ConstraintViolationException {
         MinioFileStorageService.FileSaveResult res;
         try {
             res = imageStorageService.saveFile(image);
