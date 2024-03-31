@@ -10,12 +10,12 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
     private String username;
     private UserDetails userDetails;
 
-    public JwtAuthentication(String token) {
+    public JwtAuthentication(final String token) {
         super(null);
         this.token = token;
     }
 
-    public JwtAuthentication(String token, String username, UserDetails userDetails) {
+    public JwtAuthentication(final String token, final String username, final UserDetails userDetails) {
         super(userDetails.getAuthorities());
         this.token = token;
         this.username = username;
@@ -32,11 +32,11 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
         return Objects.nonNull(userDetails) ? userDetails : username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
-    public void setUserDetails(UserDetails userDetails) {
+    public void setUserDetails(final UserDetails userDetails) {
         this.userDetails = userDetails;
     }
 }

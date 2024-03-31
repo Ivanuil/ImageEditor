@@ -1,6 +1,11 @@
 package edu.tinkoff.imageeditor.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +29,19 @@ public class UserEntity {
     private String password;
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof UserEntity userModel)) return false;
+    public boolean equals(final Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof UserEntity userModel)) {
+            return false;
+        }
         return Objects.equals(username, userModel.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return username.hashCode();
     }
 
     @Column(nullable = false)

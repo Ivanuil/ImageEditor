@@ -5,15 +5,15 @@ public class FileReadException extends Exception {
     public FileReadException() {
     }
 
-    public FileReadException(String message) {
+    public FileReadException(final String message) {
         super(message);
     }
 
-    public FileReadException(String message, Throwable cause) {
+    public FileReadException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public FileReadException(Throwable cause) {
+    public FileReadException(final Throwable cause) {
         super(cause);
     }
 }

@@ -25,11 +25,11 @@ public class JwtService {
     @Value("${app.security.jwt.expiration-time}")
     private long jwtExpiration;
 
-    public String generateFromUser(UserEntity user) {
+    public String generateFromUser(final UserEntity user) {
         return buildToken(new HashMap<>(), user, jwtExpiration);
     }
 
-    private String buildToken(Map<String, Object> extraClaims, UserEntity user, long expiration) {
+    private String buildToken(final Map<String, Object> extraClaims, final UserEntity user, final long expiration) {
         Instant currentDate = Instant.now();
         Instant expirationDate = currentDate.plus(expiration, ChronoUnit.MILLIS);
 
@@ -43,16 +43,16 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractSubject(String token) {
+    public String extractSubject(final String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
+    private <T> T extractClaim(final String token, final Function<Claims, T> claimResolver) {
         Claims allClaims = extractAllClaims(token);
         return claimResolver.apply(allClaims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(final String token) {
         return Jwts.parser().verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)

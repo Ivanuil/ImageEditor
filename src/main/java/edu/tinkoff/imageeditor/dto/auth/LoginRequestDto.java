@@ -1,11 +1,17 @@
 package edu.tinkoff.imageeditor.dto.auth;
 
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class LoginRequestDto {
 
     @NotEmpty

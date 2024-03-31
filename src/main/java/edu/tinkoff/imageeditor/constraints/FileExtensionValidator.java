@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileExtensionValidator implements ConstraintValidator<FileExtensionConstraint, MultipartFile> {
 
     @Override
-    public boolean isValid(MultipartFile file, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(final MultipartFile file, final ConstraintValidatorContext constraintValidatorContext) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 
         try {
