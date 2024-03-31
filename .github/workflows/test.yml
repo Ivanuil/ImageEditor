@@ -3,6 +3,8 @@ name: Unit Test
 on:
   workflow_run:
     workflows: [Codestyle]
+    branches:
+      - '*'
     types:
       - completed
 
