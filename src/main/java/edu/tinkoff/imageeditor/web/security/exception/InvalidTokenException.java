@@ -4,11 +4,11 @@ import org.springframework.security.core.AuthenticationException;
 
 public class InvalidTokenException extends AuthenticationException {
 
-    public InvalidTokenException(String msg, Throwable cause) {
+    public InvalidTokenException(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 
-    public InvalidTokenException(String msg) {
+    public InvalidTokenException(final String msg) {
         super(msg);
     }
 }

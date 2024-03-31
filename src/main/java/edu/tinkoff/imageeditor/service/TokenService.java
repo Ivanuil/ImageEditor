@@ -15,11 +15,11 @@ public class TokenService {
     private final TokenRepository tokenRepository;
 
     @Autowired
-    public TokenService(TokenRepository tokenRepository) {
+    public TokenService(final TokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
     }
 
-    public TokenEntity saveNewToken(String tokenValue, UserEntity user) {
+    public TokenEntity saveNewToken(final String tokenValue, final UserEntity user) {
         TokenEntity token = new TokenEntity();
         token.setToken(tokenValue);
         token.setActive(true);
@@ -27,16 +27,16 @@ public class TokenService {
         return tokenRepository.save(token);
     }
 
-    public Optional<TokenEntity> findByTokenValue(String token) {
+    public Optional<TokenEntity> findByTokenValue(final String token) {
         return tokenRepository.findByToken(token);
     }
 
-    public void makeInactive(TokenEntity token) {
+    public void makeInactive(final TokenEntity token) {
         token.setActive(false);
         tokenRepository.save(token);
     }
 
-    public void deactivateUserTokens(String username) {
+    public void deactivateUserTokens(final String username) {
         List<TokenEntity> activeTokens = tokenRepository.findByUser_UsernameAndIsActive(username, true);
         activeTokens.forEach(token -> token.setActive(false));
         tokenRepository.saveAll(activeTokens);

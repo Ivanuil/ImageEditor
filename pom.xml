@@ -23,6 +23,9 @@
         <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <openapi-diff.version>2.0.1</openapi-diff.version>
 
+        <!--OTHER PARAMS-->
+        <checkstyle.config.location>checkstyle/checkstyle.xml</checkstyle.config.location>
+
     </properties>
     <dependencies>
 
@@ -236,5 +239,15 @@
         </plugins>
 
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>

@@ -22,7 +22,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     private final TokenService tokenService;
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         String tokenValue = (String) authentication.getCredentials();
         String subject;
         try {
@@ -46,7 +46,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     }
 
     @Override
-    public boolean supports(Class<?> authentication) {
+    public boolean supports(final Class<?> authentication) {
         return JwtAuthentication.class.isAssignableFrom(authentication);
     }
 }

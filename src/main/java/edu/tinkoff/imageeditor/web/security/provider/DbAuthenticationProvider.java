@@ -6,7 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class DbAuthenticationProvider extends DaoAuthenticationProvider {
 
-    public DbAuthenticationProvider(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
+    public DbAuthenticationProvider(
+            final UserDetailsService userDetailsService, final PasswordEncoder passwordEncoder) {
         setPasswordEncoder(passwordEncoder);
         setUserDetailsService(userDetailsService);
     }
