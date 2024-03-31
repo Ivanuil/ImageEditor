@@ -6,7 +6,7 @@ on:
     branches:
       - '*'
     types:
-      - completed
+      - in_progress
 
 jobs:
   build:
