@@ -1,8 +1,8 @@
-name: Unit Test
+name: Codestyle
 
 on:
   workflow_run:
-    workflows: [ "Codestyle" ]
+    workflows: [ "Build" ]
     branches: [ * ]
     types:
       - completed
@@ -17,9 +17,4 @@ jobs:
         with:
           java-version: 1.17
       - name: Maven Verify
-        run: mvn -B clean verify
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: Ivanuil/ImageEditor
+        run: mvn checkstyle:check
