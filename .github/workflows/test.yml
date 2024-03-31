@@ -2,7 +2,7 @@ name: Unit Test
 
 on:
   workflow_run:
-    workflows: [ "Codestyle" ]
+    workflows: [Codestyle]
     types:
       - completed
 
