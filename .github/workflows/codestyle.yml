@@ -3,7 +3,6 @@ name: Codestyle
 on:
   workflow_run:
     workflows: [ "Build" ]
-    branches: [ * ]
     types:
       - completed
 
