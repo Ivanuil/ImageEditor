@@ -6,7 +6,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -14,6 +16,8 @@ import java.util.UUID;
 @Entity(name = "image_meta")
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ImageMetaEntity {
 
     @Id

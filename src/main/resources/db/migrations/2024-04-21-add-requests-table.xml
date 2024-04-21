@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="2024-04-21-add-requests-table" author="ivanuil">
+
+        <createTable tableName="request">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="original_image_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requester_username" type="VARCHAR"/>
+            <column name="modified_image_id" type="UUID"/>
+            <column name="status" type="VARCHAR"/>
+        </createTable>
+
+    </changeSet>
+
+</databaseChangeLog>
