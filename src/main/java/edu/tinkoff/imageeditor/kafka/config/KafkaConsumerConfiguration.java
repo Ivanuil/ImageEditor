@@ -12,7 +12,6 @@ import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @ConditionalOnProperty(name = "spring.kafka.enable", havingValue = "true")
 public class KafkaConsumerConfiguration {

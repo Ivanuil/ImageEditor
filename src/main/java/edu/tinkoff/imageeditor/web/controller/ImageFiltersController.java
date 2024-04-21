@@ -5,9 +5,7 @@ import edu.tinkoff.imageeditor.dto.image.ApplyImageFiltersResponse;
 import edu.tinkoff.imageeditor.dto.image.GetModifiedImageByRequestIdResponse;
 import edu.tinkoff.imageeditor.entity.FilterType;
 import edu.tinkoff.imageeditor.entity.StatusResponse;
-import edu.tinkoff.imageeditor.kafka.producer.KafkaImageWipProducer;
 import edu.tinkoff.imageeditor.service.RequestService;
-import edu.tinkoff.imageeditor.web.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,9 +56,9 @@ public class ImageFiltersController {
             @ApiResponse(responseCode = "500", description = "Непредвиденная ошибка",
                     content = {@Content(schema = @Schema(implementation = UiSuccessContainer.class))})
     })
-    public ResponseEntity<?> applyImageFilters(@PathVariable("image-id") UUID imageId,
-                                               @RequestParam("filters") FilterType[] filterTypes,
-                                               @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> applyImageFilters(@PathVariable("image-id") final UUID imageId,
+                                               @RequestParam("filters") final FilterType[] filterTypes,
+                                               @AuthenticationPrincipal final UserDetails userDetails) {
         var request = requestService.createRequest(imageId, userDetails.getUsername(), filterTypes);
         return ResponseEntity.ok(new ApplyImageFiltersResponse(request.getId()));
     }
@@ -82,15 +79,16 @@ public class ImageFiltersController {
             @ApiResponse(responseCode = "500", description = "Непредвиденная ошибка",
                     content = {@Content(schema = @Schema(implementation = UiSuccessContainer.class))})
     })
-    public ResponseEntity<?> getModifiedImageByRequestId(@PathVariable("image-id") UUID imageId,
-                                                         @PathVariable("request-id") UUID requestId) {
+    public ResponseEntity<?> getModifiedImageByRequestId(@PathVariable("image-id") final UUID imageId,
+                                                         @PathVariable("request-id") final UUID requestId) {
         var request = requestService.getRequest(requestId, imageId);
-        if (request.getStatus() == StatusResponse.WIP)
+        if (request.getStatus() == StatusResponse.WIP) {
             return ResponseEntity.ok(new GetModifiedImageByRequestIdResponse(
                     request.getOriginalImageId(), request.getStatus()));
-        else
+        } else {
             return ResponseEntity.ok(new GetModifiedImageByRequestIdResponse(
                     request.getModifiedImageId(), request.getStatus()));
+        }
     }
 
 }

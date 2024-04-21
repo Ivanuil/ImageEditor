@@ -26,24 +26,27 @@ public class RequestService {
     private final ImageMetaRepository imageMetaRepository;
     private final KafkaImageWipProducer imageWipProducer;
 
-    public RequestEntity getRequest(UUID requestId, UUID imageId) {
+    public RequestEntity getRequest(final UUID requestId, final UUID imageId) {
         var requestOpt = requestRepository.findById(requestId);
-        if (requestOpt.isEmpty())
+        if (requestOpt.isEmpty()) {
             throw new EntityNotFoundException("No request with id " + requestId);
+        }
 
         var request = requestOpt.get();
-        if (!request.getOriginalImageId().equals(imageId))
+        if (!request.getOriginalImageId().equals(imageId)) {
             throw new EntityNotFoundException("Request with id " + requestId + " has another original image id");
+        }
 
         return request;
     }
 
     @Retryable(retryFor = {KafkaException.class}, maxAttempts = 2,
             backoff = @Backoff(delay = 100))
-    public RequestEntity createRequest(UUID imageId, String username, FilterType[] filterTypes) {
+    public RequestEntity createRequest(final UUID imageId, final String username, final FilterType[] filterTypes) {
         var imageOpt = imageMetaRepository.findById(imageId);
-        if (imageOpt.isEmpty() || !imageOpt.get().getAuthor().getUsername().equals(username))
+        if (imageOpt.isEmpty() || !imageOpt.get().getAuthor().getUsername().equals(username)) {
             throw new EntityNotFoundException("No image with id " + imageId);
+        }
 
         var request = new RequestEntity(
                 UUID.randomUUID(),
@@ -59,7 +62,7 @@ public class RequestService {
         return request;
     }
 
-    public void closeRequest(UUID requestId, UUID modifiedImageId) {
+    public void closeRequest(final UUID requestId, final UUID modifiedImageId) {
         var request = requestRepository.getReferenceById(requestId);
         request.setModifiedImageId(modifiedImageId);
         request.setStatus(StatusResponse.DONE);
