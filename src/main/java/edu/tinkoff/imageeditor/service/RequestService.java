@@ -63,7 +63,8 @@ public class RequestService {
     }
 
     public void closeRequest(final UUID requestId, final UUID modifiedImageId) {
-        var request = requestRepository.getReferenceById(requestId);
+        var request = requestRepository.findById(requestId).orElseThrow(
+                () -> new EntityNotFoundException("No request with id " + requestId));
         request.setModifiedImageId(modifiedImageId);
         request.setStatus(StatusResponse.DONE);
 
