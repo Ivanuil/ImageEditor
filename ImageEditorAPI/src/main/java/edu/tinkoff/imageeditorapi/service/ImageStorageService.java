@@ -17,4 +17,7 @@ public interface ImageStorageService {
     ImageMetaEntity getMeta(UUID id);
 
     void delete(String filename) throws FileWriteException;
+
+    long getSize(String filename) throws FileReadException;
+
 }

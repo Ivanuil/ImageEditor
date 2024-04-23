@@ -56,6 +56,11 @@ public class MinioFileStorageService implements ImageStorageService {
         imageStorage.deleteObject(filename);
     }
 
+    @Override
+    public long getSize(final String filename) throws FileReadException {
+        return imageStorage.getObjectSize(filename);
+    }
+
     @Setter
     @Getter
     @AllArgsConstructor

@@ -7,6 +7,25 @@
 
     <changeSet id="2024-04-23-init-db" author="ivanuil">
 
+        <createTable tableName="processed_requests">
+            <column name="id" type="INTEGER">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="request_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="processed_requests" indexName="idx_processed_requests_request_id_image_id">
+            <column name="request_id"/>
+            <column name="image_id"/>
+        </createIndex>
+
+        <createSequence sequenceName="processed_request_seq" startValue="1" incrementBy="1"/>
+
     </changeSet>
 
 </databaseChangeLog>

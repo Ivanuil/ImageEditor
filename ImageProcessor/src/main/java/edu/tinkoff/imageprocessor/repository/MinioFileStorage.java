@@ -1,7 +1,7 @@
-package edu.tinkoff.imageeditorapi.repository;
+package edu.tinkoff.imageprocessor.repository;
 
-import edu.tinkoff.imageeditorapi.repository.exception.FileReadException;
-import edu.tinkoff.imageeditorapi.repository.exception.FileWriteException;
+import edu.tinkoff.imageprocessor.repository.exception.FileReadException;
+import edu.tinkoff.imageprocessor.repository.exception.FileWriteException;
 import io.minio.MinioClient;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
@@ -9,7 +9,6 @@ import io.minio.ObjectWriteResponse;
 import io.minio.PutObjectArgs;
 import io.minio.StatObjectArgs;
 import io.minio.GetObjectArgs;
-import io.minio.RemoveObjectArgs;
 import io.minio.errors.ErrorResponseException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -45,18 +44,17 @@ public class MinioFileStorage {
      * Saves object (file) to storage.
      * All object are saved to one bucket (${minio.bucket-name})
      * @param objectName Name to save object by
-     * @param size Object size (bytes)
      * @param object Object as a stream
      * @return Response, holding data about written object
      * @throws FileWriteException If a file writing error accrued (e.g. object with this name already exists in storage)
      */
-    public ObjectWriteResponse saveObject(final String objectName, final Long size, final InputStream object)
+    public ObjectWriteResponse saveObject(final String objectName, final InputStream object)
             throws FileWriteException {
         try {
             return minioClient.putObject(PutObjectArgs.builder()
                     .bucket(bucketName)
                     .object(objectName)
-                    .stream(object, size, -1).build());
+                    .stream(object, -1, 5 * 1024 * 1024).build());
         } catch (Exception e) {
             throw new FileWriteException(e);
         }
@@ -83,27 +81,6 @@ public class MinioFileStorage {
             return minioClient.getObject(GetObjectArgs.builder()
                     .bucket(bucketName)
                     .object(objectName).build());
-        } catch (Exception e) {
-            throw new FileReadException(e);
-        }
-    }
-
-    public void deleteObject(final String objectName) throws FileWriteException {
-        try {
-            minioClient.removeObject(RemoveObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectName)
-                    .build());
-        } catch (Exception e) {
-            throw new FileWriteException(e);
-        }
-    }
-
-    public long getObjectSize(final String objectName) throws FileReadException {
-        try {
-            return minioClient.statObject(StatObjectArgs.builder()
-                    .bucket(bucketName)
-                    .object(objectName).build()).size();
         } catch (Exception e) {
             throw new FileReadException(e);
         }

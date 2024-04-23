@@ -1,7 +1,7 @@
-package edu.tinkoff.imageeditorapi;
+package edu.tinkoff.imageprocessor.config;
 
-import edu.tinkoff.imageeditorapi.kafka.messages.ImageWipMessage;
-import edu.tinkoff.imageeditorapi.kafka.producer.KafkaImageWipProducer;
+import edu.tinkoff.imageprocessor.kafka.messages.ImageWipMessage;
+import edu.tinkoff.imageprocessor.kafka.producer.KafkaImageWipProducer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
