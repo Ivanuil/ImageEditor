@@ -19,8 +19,12 @@
     <properties>
         <java.version>17</java.version>
 
+        <!--DEPENDENCY VERSION-->
+        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
+
         <!--OTHER PARAMS-->
         <checkstyle.config.location>checkstyle/checkstyle.xml</checkstyle.config.location>
+
     </properties>
 
     <modules>
@@ -133,6 +137,32 @@
                             <outputDirectory>target/generated-sources/java</outputDirectory>
                             <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor, lombok.launch.AnnotationProcessorHider$AnnotationProcessor</processor>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <configuration>
+                    <includes>
+                        <include>edu/tinkoff/imageeditorapi/service/**</include>
+                        <include>edu/tinkoff/imageprocessor/service/**</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
