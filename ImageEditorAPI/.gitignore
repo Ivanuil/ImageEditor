@@ -35,3 +35,6 @@ build/
 ### OpenAPI ###
 ImageEditorAPI/openAPI/diff.*
 ImageEditorAPI/openAPI/api-docs.*
+/openAPI/diff.html
+/openAPI/diff.md
+/openAPI/api-docs.json

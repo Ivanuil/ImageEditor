@@ -1,10 +1,8 @@
 package edu.tinkoff.imageprocessor;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ImageProcessorApplicationTests {
+class ImageProcessorApplicationTests extends TestContext {
 
     @Test
     void contextLoads() {
