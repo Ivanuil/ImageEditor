@@ -1,4 +1,4 @@
-package edu.tinkoff.imageeditorapi.entity;
+package edu.tinkoff.imageprocessor.entity;
 
 public enum FilterType {
 

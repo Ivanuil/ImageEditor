@@ -9,22 +9,39 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
+      postgres-api:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
 
-  postgres:
+  postgres-api:
     image: postgres:14.7
     restart: always
     user: postgres
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-api-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-processor:
+    image: postgres:14.7
+    restart: always
+    user: postgres
+    volumes:
+      - db-processor-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5433:5432"
     healthcheck:
       test: [ "CMD", "pg_isready" ]
       interval: 10s
@@ -97,6 +114,7 @@ services:
       - zookeeper
 
 volumes:
-  db-data:
+  db-api-data:
+  db-processor-data:
   minio-data:
 

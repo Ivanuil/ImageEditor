@@ -77,7 +77,7 @@ public class RequestService {
         imageMetaRepository.save(new ImageMetaEntity(
                 modifiedImageId,
                 originalImageMeta.getOriginalName(),
-                fileStorageService.get(modifiedImageId).available(),
+                (int) fileStorageService.getSize(modifiedImageId.toString()),
                 originalImageMeta.getAuthor()));
 
         requestRepository.save(request);
