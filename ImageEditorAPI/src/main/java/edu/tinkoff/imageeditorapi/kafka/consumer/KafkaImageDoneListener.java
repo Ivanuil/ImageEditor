@@ -3,6 +3,7 @@ package edu.tinkoff.imageeditorapi.kafka.consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.tinkoff.imageeditorapi.kafka.messages.ImageDoneMessage;
+import edu.tinkoff.imageeditorapi.repository.exception.FileReadException;
 import edu.tinkoff.imageeditorapi.service.RequestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +33,8 @@ public class KafkaImageDoneListener {
             ack.acknowledge();
         } catch (JsonProcessingException e) {
             log.error("Unable to map String->ImageDoneMessage", e);
+        } catch (IOException | FileReadException e) {
+            log.error("Unable to find original image", e);
         }
     }
 

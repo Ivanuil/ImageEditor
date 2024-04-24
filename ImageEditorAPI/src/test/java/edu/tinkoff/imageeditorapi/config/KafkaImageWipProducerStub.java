@@ -1,4 +1,4 @@
-package edu.tinkoff.imageeditorapi;
+package edu.tinkoff.imageeditorapi.config;
 
 import edu.tinkoff.imageeditorapi.kafka.messages.ImageWipMessage;
 import edu.tinkoff.imageeditorapi.kafka.producer.KafkaImageWipProducer;

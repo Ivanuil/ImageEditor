@@ -7,10 +7,9 @@ import edu.tinkoff.imageeditorapi.entity.ImageMetaEntity;
 import edu.tinkoff.imageeditorapi.entity.StatusResponse;
 import edu.tinkoff.imageeditorapi.entity.UserEntity;
 import edu.tinkoff.imageeditorapi.kafka.producer.KafkaImageWipProducer;
-import edu.tinkoff.imageeditorapi.repository.ImageMetaRepository;
-import edu.tinkoff.imageeditorapi.repository.RequestRepository;
-import edu.tinkoff.imageeditorapi.repository.TokenRepository;
-import edu.tinkoff.imageeditorapi.repository.UserRepository;
+import edu.tinkoff.imageeditorapi.repository.*;
+import edu.tinkoff.imageeditorapi.repository.exception.FileReadException;
+import edu.tinkoff.imageeditorapi.repository.exception.FileWriteException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.*;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +33,8 @@ public class RequestServiceTest extends TestContext {
     private RequestService requestService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private MinioFileStorage fileStorage;
 
     @Autowired
     private RequestRepository requestRepository;
@@ -47,8 +49,16 @@ public class RequestServiceTest extends TestContext {
     private static final String PASSWORD = "pass123!";
     private UserEntity user;
 
+    private File testImageFile = new File("image.png");
+
     @BeforeEach
-    public void registerUser() {
+    public void registerUser() throws IOException {
+        testImageFile.createNewFile();
+        testImageFile.deleteOnExit();
+        var writer = new BufferedWriter(new FileWriter(testImageFile));
+        writer.write("SOME CONTENT");
+        writer.close();
+
         authService.register(new RegisterRequestDto(USERNAME, PASSWORD));
         user = userRepository.getReferenceById(USERNAME);
     }
@@ -122,7 +132,7 @@ public class RequestServiceTest extends TestContext {
 
     @Test
     @ExtendWith(MockitoExtension.class)
-    public void closeRequestTest() {
+    public void closeRequestTest() throws IOException, FileReadException, FileWriteException {
         // given
         var imageId = UUID.randomUUID();
         imageMetaRepository.save(new ImageMetaEntity(
@@ -132,9 +142,13 @@ public class RequestServiceTest extends TestContext {
                 user));
         var requestId = requestService.createRequest(imageId, USERNAME,
                 new FilterType[] {FilterType.REVERS_COLORS}).getId();
+        var newImageId = UUID.randomUUID();
+        fileStorage.saveObject(
+                newImageId.toString(),
+                testImageFile.length(),
+                new FileInputStream(testImageFile));
 
         // when
-        var newImageId = UUID.randomUUID();
         requestService.closeRequest(requestId, newImageId);
 
         // then
@@ -142,6 +156,7 @@ public class RequestServiceTest extends TestContext {
         assertEquals(imageId, request.getOriginalImageId());
         assertEquals(newImageId, request.getModifiedImageId());
         assertEquals(StatusResponse.DONE, request.getStatus());
+        assertTrue(imageMetaRepository.findById(newImageId).isPresent());
     }
 
     @Test
