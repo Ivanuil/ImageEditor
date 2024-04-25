@@ -88,7 +88,7 @@ public class RequestServiceTest extends TestContext {
 
         // when
         var requestId = requestService.createRequest(imageId, USERNAME,
-                new FilterType[] {FilterType.REVERS_COLORS}).getId();
+                new FilterType[] {FilterType.ROTATE_90_DEGREES_CLOCKWISE}).getId();
 
         // then
         var request = requestService.getRequest(requestId, imageId);
@@ -102,7 +102,7 @@ public class RequestServiceTest extends TestContext {
     public void createRequestNoImageTest() {
         // when
         assertThrows(EntityNotFoundException.class, () -> requestService.createRequest(UUID.randomUUID(), USERNAME,
-                new FilterType[]{FilterType.REVERS_COLORS}).getId());
+                new FilterType[]{FilterType.ROTATE_90_DEGREES_CLOCKWISE}).getId());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class RequestServiceTest extends TestContext {
                 1234,
                 user));
         var requestId = requestService.createRequest(imageId, USERNAME,
-                new FilterType[] {FilterType.REVERS_COLORS}).getId();
+                new FilterType[] {FilterType.ROTATE_90_DEGREES_CLOCKWISE}).getId();
 
         // then
         Assertions.assertThrows(EntityNotFoundException.class, () ->
@@ -141,7 +141,7 @@ public class RequestServiceTest extends TestContext {
                 1234,
                 user));
         var requestId = requestService.createRequest(imageId, USERNAME,
-                new FilterType[] {FilterType.REVERS_COLORS}).getId();
+                new FilterType[] {FilterType.ROTATE_90_DEGREES_CLOCKWISE}).getId();
         var newImageId = UUID.randomUUID();
         fileStorage.saveObject(
                 newImageId.toString(),
