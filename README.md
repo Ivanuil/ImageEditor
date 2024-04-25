@@ -21,7 +21,7 @@
 
 ## Architecture
 
-![](C:\Users\ivo-p\Documents\BackendAcademy\2-semester\ImageEditor\misc\images\architecture_diagram.png)
+![](misc/images/architecture_diagram.png)
 
 ## How to run
 
