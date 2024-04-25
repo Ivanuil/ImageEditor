@@ -7,7 +7,6 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="ImageProcessor" />
       </profile>
       <profile name="Annotation profile for ImageEditor" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -20,6 +19,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
         </processorPath>
         <module name="ImageEditorAPI" />
+        <module name="ImageProcessor" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

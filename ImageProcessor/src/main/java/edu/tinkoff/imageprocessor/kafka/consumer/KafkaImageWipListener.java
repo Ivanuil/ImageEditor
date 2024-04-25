@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 @Component
 @RequiredArgsConstructor
@@ -63,15 +64,19 @@ public class KafkaImageWipListener {
                 ack.acknowledge();
                 log.info("Accepted request for processing " + message);
 
-                executorService.submit(() -> {
-                    try {
-                        filterProcessingService.applyFilter(message.getRequestId(),
-                                message.getImageId(),
-                                message.getFilters());
-                    } catch (FileReadException | IOException | FileWriteException e) {
-                        log.error("Unable to process filter that already has bean acknowledged", e);
-                    }
-                });
+                try {
+                    executorService.submit(() -> {
+                        try {
+                            filterProcessingService.applyFilter(message.getRequestId(),
+                                    message.getImageId(),
+                                    message.getFilters());
+                        } catch (FileReadException | IOException | FileWriteException e) {
+                            log.error("Unable to process filter that already has bean acknowledged", e);
+                        }
+                    });
+                } catch (RejectedExecutionException e) {
+                    log.warn("ExecutorService overwhelmed, rejecting message", e);
+                }
 
             }
         } catch (JsonProcessingException e) {

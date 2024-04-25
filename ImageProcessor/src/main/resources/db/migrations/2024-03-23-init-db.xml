@@ -8,7 +8,7 @@
     <changeSet id="2024-04-23-init-db" author="ivanuil">
 
         <createTable tableName="processed_requests">
-            <column name="id" type="UUID">
+            <column name="id" type="INTEGER">
                 <constraints primaryKey="true"/>
             </column>
             <column name="request_id" type="UUID">

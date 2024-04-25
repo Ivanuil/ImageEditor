@@ -1,6 +1,7 @@
 package edu.tinkoff.imageprocessor.service;
 
 import edu.tinkoff.imageprocessor.entity.FilterType;
+import edu.tinkoff.imageprocessor.entity.ProcessedRequestEntity;
 import edu.tinkoff.imageprocessor.kafka.messages.ImageDoneMessage;
 import edu.tinkoff.imageprocessor.kafka.messages.ImageWipMessage;
 import edu.tinkoff.imageprocessor.kafka.producer.KafkaImageDoneProducer;
@@ -60,6 +61,8 @@ public class FilterProcessingService {
         var outputStream = processor.process(inputStream);
         var after = System.currentTimeMillis();
         var newImageId = fileStorage.saveFile(outputStream);
+
+        processedRequestsRepository.save(new ProcessedRequestEntity(null, requestId, imageId));
 
         if (filters.length == 1) {  // No filters left
             log.info("Finished processing request {} on image {} with filters {} in {} ms",

@@ -44,7 +44,6 @@ public class MinioFileStorage {
      * Saves object (file) to storage.
      * All object are saved to one bucket (${minio.bucket-name})
      * @param objectName Name to save object by
-     * @param size Object size (bytes)
      * @param object Object as a stream
      * @return Response, holding data about written object
      * @throws FileWriteException If a file writing error accrued (e.g. object with this name already exists in storage)
