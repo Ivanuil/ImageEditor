@@ -51,6 +51,7 @@ jobs:
           slug: Ivanuil/ImageEditor
 
   deploy-image-editor-api:
+    if: false
     needs: test
     runs-on: self-hosted
     steps:
@@ -75,6 +76,7 @@ jobs:
           tags: ivanuil/image-editor-api:latest
 
   deploy-image-processor:
+    if: false
     needs: test
     runs-on: self-hosted
     steps:
