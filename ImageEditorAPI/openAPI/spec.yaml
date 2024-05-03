@@ -232,10 +232,9 @@ paths:
             items:
               type: string
               enum:
-                # Приведенные ниже фильтры представлены в ознакомительных целях,
-                # тут вы можете вставить все, что душе угодно
                 - SLOW_FILTER
                 - ROTATE_90_DEGREES_CLOCKWISE
+                - GAUSSIAN_BLUR
       responses:
         '200':
           description: Успех выполнения операции

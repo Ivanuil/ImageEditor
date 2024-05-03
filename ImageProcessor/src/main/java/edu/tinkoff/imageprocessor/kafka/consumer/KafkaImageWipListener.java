@@ -54,33 +54,37 @@ public class KafkaImageWipListener {
     @KafkaListener(topics = {"${spring.kafka.topic-name.images-wip}"}, autoStartup = "true")
     public void listen(final ConsumerRecord<?, ?> cr,
                        final Acknowledgment ack) {
-        try {
-            var message = mapper.readValue(cr.value().toString(), ImageWipMessage.class);
-            if (filterProcessingService.isAlreadyProcessed(message.getRequestId(), message.getImageId())) {
-                log.warn("Consumer picked up message " + message + ", but it is already processed");
-                return;
-            }
-            if (filterProcessingService.isFilterAvailable(message.getFilters()[0])) {
-                ack.acknowledge();
-                log.info("Accepted request for processing " + message);
-
-                try {
-                    executorService.submit(() -> {
-                        try {
-                            filterProcessingService.applyFilter(message.getRequestId(),
-                                    message.getImageId(),
-                                    message.getFilters());
-                        } catch (FileReadException | IOException | FileWriteException e) {
-                            log.error("Unable to process filter that already has bean acknowledged", e);
-                        }
-                    });
-                } catch (RejectedExecutionException e) {
-                    log.warn("ExecutorService overwhelmed, rejecting message", e);
-                }
-
-            }
+        ImageWipMessage message;
+        try {  // Try to parse message
+            message = mapper.readValue(cr.value().toString(), ImageWipMessage.class);
         } catch (JsonProcessingException e) {
             log.error("Unable to map String->ImageWipMessage", e);
+            return;
+        }
+
+        //  Check if image is already processed
+        if (filterProcessingService.isAlreadyProcessed(message.getRequestId(), message.getImageId())) {
+            log.warn("Consumer picked up message " + message + ", but it is already processed");
+            return;
+        }
+
+        if (filterProcessingService.isFilterAvailable(message.getFilters()[0])) {
+            log.info("Accepted request for processing " + message);
+
+            try {
+                executorService.submit(() -> {
+                    try {
+                        filterProcessingService.applyFilter(message.getRequestId(),
+                                message.getImageId(),
+                                message.getFilters());
+                        ack.acknowledge();  // Commit offset
+                    } catch (FileReadException | IOException | FileWriteException e) {
+                        log.error("Unable to process filter that already has bean acknowledged", e);
+                    }
+                });
+            } catch (RejectedExecutionException e) {
+                log.warn("ExecutorService overwhelmed, rejecting message", e);
+            }
         }
     }
 

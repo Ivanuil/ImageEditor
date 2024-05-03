@@ -60,7 +60,13 @@ public class FilterProcessingService {
         var before = System.currentTimeMillis();
         var outputStream = processor.process(inputStream);
         var after = System.currentTimeMillis();
-        var newImageId = fileStorage.saveFile(outputStream);
+
+        UUID newImageId;
+        if (filters.length == 1) {  // No filters left
+            newImageId = fileStorage.saveFile(outputStream, false);
+        } else {  // One or more filters left
+            newImageId = fileStorage.saveFile(outputStream, true);
+        }
 
         processedRequestsRepository.save(new ProcessedRequestEntity(null, requestId, imageId));
 
@@ -71,7 +77,6 @@ public class FilterProcessingService {
         } else {  // One or more filters left
             FilterType[] newFilters = Arrays.copyOfRange(filters, 1, filters.length);
             imageWipProducer.sendMessage(new ImageWipMessage(newImageId, requestId, newFilters));
-            // todo: set ttl
         }
     }
 
