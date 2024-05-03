@@ -17,14 +17,15 @@ public class MinioFileStorageService implements ImageStorageService {
     /**
      * Save file in the Minio storage with file extension as prefix
      *
-     * @param file file to save
+     * @param inputStream file to save
+     * @param isTemporary if true then file will be marked as temporary, with ttl
      * @return generated file name
      */
-    public UUID saveFile(final InputStream inputStream) throws FileWriteException {
+    public UUID saveFile(final InputStream inputStream, final boolean isTemporary) throws FileWriteException {
 
         UUID generatedFileName = UUID.randomUUID();
         try {
-            imageStorage.saveObject(String.valueOf(generatedFileName), inputStream);
+            imageStorage.saveObject(String.valueOf(generatedFileName), inputStream, isTemporary);
         } catch (FileWriteException e) {
             throw new FileWriteException(e);
         }

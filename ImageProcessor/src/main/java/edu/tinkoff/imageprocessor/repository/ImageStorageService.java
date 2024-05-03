@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ImageStorageService {
 
-    UUID saveFile(InputStream inputStream) throws FileWriteException;
+    UUID saveFile(InputStream inputStream, boolean isTemporary) throws FileWriteException;
 
     InputStream get(UUID id) throws FileReadException;
 

@@ -54,7 +54,7 @@ public class FilterProcessingServiceTest extends TestContext {
         // given
         var requestId = UUID.randomUUID();
         var imageId = UUID.randomUUID();
-        fileStorage.saveObject(imageId.toString(), new FileInputStream(testImageFile));
+        fileStorage.saveObject(imageId.toString(), new FileInputStream(testImageFile), false);
 
         // when
         filterProcessingService.applyFilter(requestId, imageId, new FilterType[] {FilterType.DO_NOTHING});
