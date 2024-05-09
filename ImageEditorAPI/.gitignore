@@ -1,4 +1,6 @@
+../ImageProcessor/HELP.md
 target/
+!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -29,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### OpenAPI ###
+ImageEditorAPI/openAPI/diff.*
+ImageEditorAPI/openAPI/api-docs.*
+/openAPI/diff.html
+/openAPI/diff.md
+/openAPI/api-docs.json
