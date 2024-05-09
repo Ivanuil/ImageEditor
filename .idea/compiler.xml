@@ -28,6 +28,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AggregateReport" options="-parameters" />
       <module name="ImageEditor" options="-parameters" />
       <module name="ImageEditorAPI" options="-parameters" />
       <module name="ImageProcessor" options="-parameters" />

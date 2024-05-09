@@ -32,6 +32,7 @@
     <modules>
         <module>ImageEditorAPI</module>
         <module>ImageProcessor</module>
+        <module>AggregateReport</module>
     </modules>
 
     <dependencies>
@@ -174,8 +175,8 @@
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <includes>
-                        <include>edu/tinkoff/imageeditorapi/service/**</include>
                         <include>edu/tinkoff/imageprocessor/service/**</include>
+                        <include>edu/tinkoff/imageeditorapi/service/**</include>
                     </includes>
                     <excludes>
                         <exclude>edu/tinkoff/imageprocessor/service/processors/**</exclude>
@@ -183,15 +184,9 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
