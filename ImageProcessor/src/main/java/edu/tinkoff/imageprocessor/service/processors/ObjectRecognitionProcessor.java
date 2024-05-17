@@ -1,13 +1,20 @@
 package edu.tinkoff.imageprocessor.service.processors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.tinkoff.imageprocessor.exceptions.ProcessorFailedException;
+import edu.tinkoff.imageprocessor.exceptions.RequestFailedException;
 import edu.tinkoff.imageprocessor.entity.FilterType;
 import edu.tinkoff.imageprocessor.dto.ImaggaTagsResponseDto;
 import edu.tinkoff.imageprocessor.dto.ImaggaUploadResponseDto;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -42,17 +49,27 @@ import java.util.List;
 public class ObjectRecognitionProcessor implements ImageFilterProcessor {
 
     @Value("${filters.object-recognition.api-key}")
-    private static String imaggaApiKey;
+    private String imaggaApiKey;
     @Value("${filters.object-recognition.api-secret}")
-    private static String imaggaApiSecret;
+    private String imaggaApiSecret;
 
-    private static final String CREDENTIALS_TO_ENCODE = String.format("%s:%s", imaggaApiKey, imaggaApiSecret);
-    private static final String BASIC_AUTH = Base64.getEncoder()
-            .encodeToString(CREDENTIALS_TO_ENCODE.getBytes(StandardCharsets.UTF_8));
+    private static String credentialsToEncode;
+    private static String basicAuth;
 
     private static final String IMAGGA_URL =  "https://api.imagga.com/v2";
 
     private final ObjectMapper mapper;
+    private final CircuitBreakerFactory circuitBreakerFactory;
+    private CircuitBreaker circuitBreaker;
+
+    @PostConstruct
+    public void init() {
+        credentialsToEncode = String.format("%s:%s", imaggaApiKey, imaggaApiSecret);
+        basicAuth = Base64.getEncoder()
+                .encodeToString(credentialsToEncode.getBytes(StandardCharsets.UTF_8));
+
+        circuitBreaker = circuitBreakerFactory.create("imagga-integration-circuit-breaker");
+    }
 
     @Override
     public FilterType getFilterType() {
@@ -61,6 +78,8 @@ public class ObjectRecognitionProcessor implements ImageFilterProcessor {
 
     @Override
     public InputStream process(final InputStream stream) throws IOException {
+        System.out.println(credentialsToEncode);
+        System.out.println(basicAuth);
 
         // Cloning InputStream
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -68,8 +87,25 @@ public class ObjectRecognitionProcessor implements ImageFilterProcessor {
         InputStream firstStream = new ByteArrayInputStream(baos.toByteArray());
         InputStream secondStream = new ByteArrayInputStream(baos.toByteArray());
 
+        var topTags = circuitBreaker.run(() -> {
+                    try {
+                        return getTagsForImage(firstStream);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                throwable -> {
+                    log.warn("Circuit breaker failed", throwable);
+                    throw new ProcessorFailedException("Circuit breaker failed");
+                });
+
+        return markTags(secondStream, topTags);
+    }
+
+    private List<ImaggaTagsResponseDto.Tag> getTagsForImage(final InputStream stream) throws IOException {
+
         // Upload image
-        String uploadRes = upload(firstStream);
+        String uploadRes = uploadImage(stream);
         var uploadResObj = mapper.readValue(uploadRes, ImaggaUploadResponseDto.class);
         if (!uploadResObj.getStatus().getType().equals("success")) {
             log.error("Unable to process imagga upload, received response: {}", uploadRes);
@@ -77,18 +113,16 @@ public class ObjectRecognitionProcessor implements ImageFilterProcessor {
         }
 
         // Get tags
-        String tagsRes = getTags(uploadResObj.getResult().getUploadId());
+        String tagsRes = fetchTags(uploadResObj.getResult().getUploadId());
         var tagsResObj = mapper.readValue(tagsRes, ImaggaTagsResponseDto.class);
         if (!tagsResObj.getStatus().getType().equals("success")) {
             log.error("Unable to process imagga tags, received response: {}", tagsRes);
             throw new RuntimeException("Processor failed");
         }
 
-        var topTags = Arrays.stream(tagsResObj.getResult().getTags())
+        return Arrays.stream(tagsResObj.getResult().getTags())
                 .sorted(Comparator.comparingDouble(ImaggaTagsResponseDto.Tag::getConfidence))
                 .limit(3).toList();
-
-        return markTags(secondStream, topTags);
     }
 
     private InputStream markTags(final InputStream stream,
@@ -121,7 +155,8 @@ public class ObjectRecognitionProcessor implements ImageFilterProcessor {
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
-    private static String upload(final InputStream inputStream) throws IOException {
+    @Retryable(retryFor = {RequestFailedException.class}, backoff = @Backoff(delay = 100))
+    private static String uploadImage(final InputStream inputStream) throws IOException {
         // Change the file path here
         String filepath = "path_to_image";
         File fileToUpload = new File(filepath);
@@ -132,7 +167,7 @@ public class ObjectRecognitionProcessor implements ImageFilterProcessor {
         String twoHyphens = "--";
         String boundary =  "Image Upload";
 
-        HttpURLConnection connection = getHttpURLConnectionForUpload(endpoint, BASIC_AUTH, boundary);
+        HttpURLConnection connection = getHttpURLConnectionForUpload(endpoint, boundary);
 
         DataOutputStream request = new DataOutputStream(connection.getOutputStream());
 
@@ -151,6 +186,14 @@ public class ObjectRecognitionProcessor implements ImageFilterProcessor {
         request.writeBytes(twoHyphens + boundary + twoHyphens + crlf);
         request.flush();
         request.close();
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode == 429 || (responseCode >= 500 && responseCode < 600)) {
+            throw new RequestFailedException("Upload image request failed with response code: " + responseCode);
+        } else if (responseCode != 200) {
+            throw new ProcessorFailedException("Upload image request failed. Response code: " + responseCode
+                + " Response message: " + connection.getResponseMessage());
+        }
 
         InputStream responseStream = new BufferedInputStream(connection.getInputStream());
 
@@ -173,7 +216,7 @@ public class ObjectRecognitionProcessor implements ImageFilterProcessor {
     }
 
     private static HttpURLConnection getHttpURLConnectionForUpload(
-            final String endpoint, final String basicAuth, final String boundary) throws IOException {
+            final String endpoint, final String boundary) throws IOException {
         URL urlObject = new URL("https://api.imagga.com/v2" + endpoint);
         HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
         connection.setRequestProperty("Authorization", "Basic " + basicAuth);
@@ -188,11 +231,19 @@ public class ObjectRecognitionProcessor implements ImageFilterProcessor {
         return connection;
     }
 
-    private static String getTags(final String imageId) throws IOException {
+    @Retryable(retryFor = {RequestFailedException.class}, backoff = @Backoff(delay = 100))
+    private static String fetchTags(final String imageId) throws IOException {
         URL url = new URL(IMAGGA_URL + "/tags" + "?image_upload_id=" + imageId);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        connection.setRequestProperty("Authorization", "Basic " + BASIC_AUTH);
+        connection.setRequestProperty("Authorization", "Basic " + basicAuth);
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode == 429 || (responseCode >= 500 && responseCode < 600)) {
+            throw new RequestFailedException("Fetch tags request failed with response code: " + responseCode);
+        } else if (responseCode != 200) {
+            throw new ProcessorFailedException("Fetch tags request failed with response code: " + responseCode);
+        }
 
         BufferedReader connectionInput = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
