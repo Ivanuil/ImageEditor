@@ -58,7 +58,8 @@ public class ImageFiltersController {
     })
     public ResponseEntity<?> applyImageFilters(@PathVariable("image-id") final UUID imageId,
                                                @RequestParam("filters") final FilterType[] filterTypes,
-                                               @AuthenticationPrincipal final UserDetails userDetails) {
+                                               @AuthenticationPrincipal final UserDetails userDetails)
+            throws Exception {
         var request = requestService.createRequest(imageId, userDetails.getUsername(), filterTypes);
         return ResponseEntity.ok(new ApplyImageFiltersResponse(request.getId()));
     }

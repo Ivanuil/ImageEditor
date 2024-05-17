@@ -77,7 +77,7 @@ public class RequestServiceTest extends TestContext {
 
     @Test
     @ExtendWith(MockitoExtension.class)
-    public void createRequestTest() {
+    public void createRequestTest() throws Exception {
         // given
         var imageId = UUID.randomUUID();
         imageMetaRepository.save(new ImageMetaEntity(
@@ -114,7 +114,7 @@ public class RequestServiceTest extends TestContext {
 
     @Test
     @ExtendWith(MockitoExtension.class)
-    public void getRequestWrongImageIdTest() {
+    public void getRequestWrongImageIdTest() throws Exception {
         // given
         var imageId = UUID.randomUUID();
         imageMetaRepository.save(new ImageMetaEntity(
@@ -132,7 +132,7 @@ public class RequestServiceTest extends TestContext {
 
     @Test
     @ExtendWith(MockitoExtension.class)
-    public void closeRequestTest() throws IOException, FileReadException, FileWriteException {
+    public void closeRequestTest() throws Exception {
         // given
         var imageId = UUID.randomUUID();
         imageMetaRepository.save(new ImageMetaEntity(

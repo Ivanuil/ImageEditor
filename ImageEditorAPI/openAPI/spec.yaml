@@ -235,6 +235,7 @@ paths:
                 - SLOW_FILTER
                 - ROTATE_90_DEGREES_CLOCKWISE
                 - GAUSSIAN_BLUR
+                - OBJECT_RECOGNITION
       responses:
         '200':
           description: Успех выполнения операции
