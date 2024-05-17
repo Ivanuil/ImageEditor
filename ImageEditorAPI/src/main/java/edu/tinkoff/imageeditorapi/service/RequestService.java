@@ -32,6 +32,7 @@ public class RequestService {
 
     private final RequestRepository requestRepository;
     private final ImageMetaRepository imageMetaRepository;
+    private final PreferencesService preferencesService;
     private final KafkaImageWipProducer imageWipProducer;
     private final MinioFileStorageService fileStorageService;
     private final RateLimiterRegistry rateLimiterRegistry;
@@ -83,6 +84,10 @@ public class RequestService {
         // Run job through ratelimiter if request contains OBJECT_RECOGNITION filter,
         // or simply execute callable otherwise
         if (Arrays.asList(filterTypes).contains(FilterType.OBJECT_RECOGNITION)) {
+            if (preferencesService.getRemainingImaggaRequests() <= 0) {
+                throw new RuntimeException("No remaining imagga requests");
+            }
+            preferencesService.decrementRemainingImaggaRequests();
             return rateLimiter.executeCallable(createRequestJob);
         } else {
             return createRequestJob.call();
