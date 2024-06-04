@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="2024-03-23-init-db" author="ivanuil">
+
+        <createTable tableName="users">
+            <column name="username" type="VARCHAR(30)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="password" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR"/>
+        </createTable>
+
+        <createTable tableName="token">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="token" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="token"
+                                 baseColumnNames="username"
+                                 constraintName="fk_token_username"
+                                 referencedTableName="users"
+                                 referencedColumnNames="username"/>
+
+        <createIndex tableName="token" indexName="idx_token_username">
+            <column name="username"/>
+        </createIndex>
+
+        <createTable tableName="image_meta">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="origin_name" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+            <column name="size" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_username" type="VARCHAR">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="image_meta"
+                                 baseColumnNames="owner_username"
+                                 constraintName="fk_image_meta_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="username"/>
+
+    </changeSet>
+
+</databaseChangeLog>
