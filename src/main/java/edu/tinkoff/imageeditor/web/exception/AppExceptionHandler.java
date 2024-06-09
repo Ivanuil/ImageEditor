@@ -17,30 +17,30 @@ import java.util.Arrays;
 @RestControllerAdvice
 public class AppExceptionHandler {
 
-    final Logger logger = LoggerFactory.getLogger(AppExceptionHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(AppExceptionHandler.class);
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<?> handleException(AuthenticationException e) {
+    public ResponseEntity<?> handleException(final AuthenticationException e) {
         return ResponseEntity.status(403).body(new UiSuccessContainer(false, e.getMessage()));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, HandlerMethodValidationException.class})
-    public ResponseEntity<?> handleException(ConstraintViolationException e) {
+    public ResponseEntity<?> handleException(final ConstraintViolationException e) {
         return ResponseEntity.status(400).body(new UiSuccessContainer(false, e.getMessage()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleException(EntityNotFoundException e) {
+    public ResponseEntity<?> handleException(final EntityNotFoundException e) {
         return ResponseEntity.status(404).body(new UiSuccessContainer(false, e.getMessage()));
     }
 
     @ExceptionHandler(FileReadException.class)
-    public ResponseEntity<?> handleException(FileReadException e) {
+    public ResponseEntity<?> handleException(final FileReadException e) {
         return ResponseEntity.status(400).body(new UiSuccessContainer(false, e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException(Exception e) {
+    public ResponseEntity<?> handleException(final Exception e) {
         logger.warn(String.format("""
                 Caught unprocessed exception %s
                    with message: %s

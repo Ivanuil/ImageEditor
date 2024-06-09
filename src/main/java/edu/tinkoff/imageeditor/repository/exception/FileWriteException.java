@@ -5,15 +5,15 @@ public class FileWriteException extends Exception {
     public FileWriteException() {
     }
 
-    public FileWriteException(String message) {
+    public FileWriteException(final String message) {
         super(message);
     }
 
-    public FileWriteException(String message, Throwable cause) {
+    public FileWriteException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public FileWriteException(Throwable cause) {
+    public FileWriteException(final Throwable cause) {
         super(cause);
     }
 }

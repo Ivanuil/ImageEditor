@@ -35,13 +35,15 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final String[] ALLOWED_URL_PATTERNS = { "/auth/register", "/auth/login",
+    private static final String[] ALLOWED_URL_PATTERNS = {
+            "/auth/register", "/auth/login",
             "/swagger-ui/**", "/v3/api-docs/**",
             "/actuator", "/actuator/health"};
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, LogoutSuccessHandler logoutHandler,
-                                           AuthenticationManager authManager) throws Exception {
+    public SecurityFilterChain filterChain(
+            final HttpSecurity http, final LogoutSuccessHandler logoutHandler,
+            final AuthenticationManager authManager) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -62,7 +64,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, List<AuthenticationProvider> providers) throws Exception {
+    public AuthenticationManager authenticationManager(
+            final HttpSecurity http, final List<AuthenticationProvider> providers) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         providers.forEach(authenticationManagerBuilder::authenticationProvider);
@@ -71,20 +74,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository) {
+    public UserDetailsService userDetailsService(final UserRepository userRepository) {
         return new UserDetailsServiceImpl(userRepository);
     }
 
     @Bean
-    public AuthenticationProvider jwtAuthenticationProvider(JwtService jwtService,
-                                                            UserDetailsService userDetailsService,
-                                                            TokenService tokenService) {
+    public AuthenticationProvider jwtAuthenticationProvider(final JwtService jwtService,
+                                                            final UserDetailsService userDetailsService,
+                                                            final TokenService tokenService) {
         return new JwtAuthenticationProvider(jwtService, userDetailsService, tokenService);
     }
 
     @Bean
-    public AuthenticationProvider dbAuthenticationProvider(UserDetailsService userDetailsService,
-                                                           PasswordEncoder passwordEncoder) {
+    public AuthenticationProvider dbAuthenticationProvider(final UserDetailsService userDetailsService,
+                                                           final PasswordEncoder passwordEncoder) {
         return new DbAuthenticationProvider(userDetailsService, passwordEncoder);
     }
 

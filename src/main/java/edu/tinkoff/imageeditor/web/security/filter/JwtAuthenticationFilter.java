@@ -26,15 +26,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+    private final SecurityContextHolderStrategy securityContextHolderStrategy
+            = SecurityContextHolder.getContextHolderStrategy();
     private final SecurityContextRepository securityContextRepository = new RequestAttributeSecurityContextRepository();
 
     private final AuthenticationManager authenticationManager;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    @NotNull final HttpServletResponse response,
+                                    @NotNull final FilterChain filterChain) throws ServletException, IOException {
 
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> tokenCookieOpt = Optional.empty();

@@ -10,9 +10,9 @@ public class ObjectStorageConfig {
 
     @Bean
     public MinioClient minioClient(
-            @Value("${minio.datasource.url}") String endpoint,
-            @Value("${minio.datasource.username}") String accessKey,
-            @Value("${minio.datasource.password}") String secretKey
+            @Value("${minio.datasource.url}") final String endpoint,
+            @Value("${minio.datasource.username}") final String accessKey,
+            @Value("${minio.datasource.password}") final String secretKey
     ) {
         return MinioClient.builder()
                 .endpoint(endpoint)

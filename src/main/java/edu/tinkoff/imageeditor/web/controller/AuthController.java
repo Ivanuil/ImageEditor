@@ -15,7 +15,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.stream.Collectors;
 
@@ -27,10 +31,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // TODO: Расписать @ApiResponses
+    // todo: Расписать @ApiResponses
     @GetMapping("/user")
     @Operation(summary = "Возвращает информацию о авторизованном пользователе")
-    public ResponseEntity<AuthUserDto> user(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<AuthUserDto> user(@AuthenticationPrincipal final UserDetailsImpl userDetails) {
         AuthUserDto user = new AuthUserDto();
         user.setUsername(userDetails.getUsername());
         user.setRoles(authService.getUserRole(userDetails.getUsername())
@@ -38,27 +42,27 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
-    // TODO: Расписать @ApiResponses
+    // todo: Расписать @ApiResponses
     @PostMapping("/register")
     @Operation(summary = "Регистрирует нового пользователя")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequestDto requestDto,
-                                      HttpServletResponse response) {
+    public ResponseEntity<?> register(@RequestBody @Valid final RegisterRequestDto requestDto,
+                                      final HttpServletResponse response) {
         AuthUserDto authUser = authService.register(requestDto);
         addTokenCookieToResponse(response, authUser.getToken());
         return ResponseEntity.ok(authUser);
     }
 
-    // TODO: Расписать @ApiResponses
+    // todo: Расписать @ApiResponses
     @PostMapping("/login")
     @Operation(summary = "Авторизовывает зарегистрированного пользователя")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto requestDto,
-                                   HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody final LoginRequestDto requestDto,
+                                   final HttpServletResponse response) {
         AuthUserDto authUser = authService.login(requestDto);
         addTokenCookieToResponse(response, authUser.getToken());
         return ResponseEntity.ok(authUser);
     }
 
-    private void addTokenCookieToResponse(HttpServletResponse response, String token) {
+    private void addTokenCookieToResponse(final HttpServletResponse response, final String token) {
         Cookie cookie = new Cookie(SecurityConstants.JWT_COOKIE_NAME, token);
         cookie.setSecure(false);
         cookie.setHttpOnly(true);

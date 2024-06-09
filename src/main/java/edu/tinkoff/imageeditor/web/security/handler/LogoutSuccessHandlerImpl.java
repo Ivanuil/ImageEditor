@@ -22,7 +22,8 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
     private final TokenService tokenService;
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public void onLogoutSuccess(final HttpServletRequest request,
+                                final HttpServletResponse response, final Authentication authentication) {
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> tokenCookieOpt = Optional.empty();
         if (Objects.nonNull(cookies)) {

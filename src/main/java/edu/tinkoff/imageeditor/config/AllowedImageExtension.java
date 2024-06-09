@@ -4,7 +4,7 @@ public enum AllowedImageExtension {
     PNG,
     JPEG;
 
-    public static AllowedImageExtension caseIgnoreValueOf(String value) {
+    public static AllowedImageExtension caseIgnoreValueOf(final String value) {
         for (AllowedImageExtension enumValue : values()) {
             if (enumValue.name().equalsIgnoreCase(value)) {
                 return enumValue;

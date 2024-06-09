@@ -33,7 +33,7 @@ public class AuthService {
      * @param registerRequest object that contains username and password
      * @return user dto with roles and generated token
      */
-    public AuthUserDto register(RegisterRequestDto registerRequest) {
+    public AuthUserDto register(final RegisterRequestDto registerRequest) {
         if (userRepository.existsById(registerRequest.getUsername())) {
             throw new AuthenticationException("User with that username already exists");
         }
@@ -56,9 +56,10 @@ public class AuthService {
      * @return user dto with roles and generated token
      */
     @Transactional
-    public AuthUserDto login(LoginRequestDto loginRequest) {
-        if (userRepository.findById(loginRequest.getUsername()).isEmpty())
+    public AuthUserDto login(final LoginRequestDto loginRequest) {
+        if (userRepository.findById(loginRequest.getUsername()).isEmpty()) {
             throw new AuthenticationException("No user with username: " + loginRequest.getUsername());
+        }
 
         authManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword()));
@@ -72,7 +73,7 @@ public class AuthService {
                 user.getRole().getRoles().stream().map(Role::toString).collect(Collectors.toSet()));
     }
 
-    public Role getUserRole(String username) {
+    public Role getUserRole(final String username) {
         return userRepository.findById(username).orElseThrow(() ->
                 new AuthenticationException("No user with username: " + username)).getRole();
     }

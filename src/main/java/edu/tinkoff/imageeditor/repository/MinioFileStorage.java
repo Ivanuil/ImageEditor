@@ -2,7 +2,16 @@ package edu.tinkoff.imageeditor.repository;
 
 import edu.tinkoff.imageeditor.repository.exception.FileReadException;
 import edu.tinkoff.imageeditor.repository.exception.FileWriteException;
-import io.minio.*;
+import io.minio.MinioClient;
+import io.minio.BucketExistsArgs;
+import io.minio.MakeBucketArgs;
+import io.minio.ObjectWriteResponse;
+import io.minio.PutObjectArgs;
+import io.minio.StatObjectArgs;
+import io.minio.GetObjectArgs;
+import io.minio.RemoveObjectArgs;
+import io.minio.ListObjectsArgs;
+import io.minio.Result;
 import io.minio.errors.ErrorResponseException;
 import io.minio.messages.Item;
 import jakarta.annotation.PostConstruct;
@@ -46,7 +55,8 @@ public class MinioFileStorage {
      * @return Response, holding data about written object
      * @throws FileWriteException If a file writing error accrued (e.g. object with this name already exists in storage)
      */
-    public ObjectWriteResponse saveObject(String objectName, Long size, InputStream object) throws FileWriteException {
+    public ObjectWriteResponse saveObject(final String objectName, final Long size, final InputStream object)
+            throws FileWriteException {
         try {
             return minioClient.putObject(PutObjectArgs.builder()
                     .bucket(bucketName)
@@ -60,7 +70,7 @@ public class MinioFileStorage {
     /**
      * Checks if there is an object by this name in storage
      */
-    public boolean isObjectExist(String objectName) {
+    public boolean isObjectExist(final String objectName) {
         try {
             minioClient.statObject(StatObjectArgs.builder()
                     .bucket(bucketName)
@@ -73,7 +83,7 @@ public class MinioFileStorage {
         }
     }
 
-    public InputStream getObject(String objectName) throws FileReadException {
+    public InputStream getObject(final String objectName) throws FileReadException {
         try {
             return minioClient.getObject(GetObjectArgs.builder()
                     .bucket(bucketName)
@@ -83,7 +93,7 @@ public class MinioFileStorage {
         }
     }
 
-    public void deleteObject(String objectName) throws FileWriteException {
+    public void deleteObject(final String objectName) throws FileWriteException {
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
                     .bucket(bucketName)
@@ -102,7 +112,7 @@ public class MinioFileStorage {
         for (Result<Item> result : iterable) {
             try {
                 objectNameList.add(result.get().objectName());
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) { }
         }
         return objectNameList;
     }

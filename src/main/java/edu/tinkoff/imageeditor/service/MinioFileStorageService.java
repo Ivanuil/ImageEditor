@@ -6,7 +6,10 @@ import edu.tinkoff.imageeditor.repository.MinioFileStorage;
 import edu.tinkoff.imageeditor.repository.exception.FileReadException;
 import edu.tinkoff.imageeditor.repository.exception.FileWriteException;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +29,7 @@ public class MinioFileStorageService implements ImageStorageService {
      * @param file file to save
      * @return generated file name
      */
-    public FileSaveResult saveFile(MultipartFile file) throws FileWriteException {
+    public FileSaveResult saveFile(final MultipartFile file) throws FileWriteException {
 
         UUID generatedFileName = UUID.randomUUID();
         try {
@@ -39,17 +42,17 @@ public class MinioFileStorageService implements ImageStorageService {
     }
 
     @Override
-    public InputStream get(UUID id) throws FileReadException {
+    public InputStream get(final UUID id) throws FileReadException {
         return imageStorage.getObject(String.valueOf(id));
     }
 
     @Override
-    public ImageMetaEntity getMeta(UUID id) {
+    public ImageMetaEntity getMeta(final UUID id) {
         return metaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Image not found"));
     }
 
     @Override
-    public void delete(String filename) throws FileWriteException {
+    public void delete(final String filename) throws FileWriteException {
         imageStorage.deleteObject(filename);
     }
 
